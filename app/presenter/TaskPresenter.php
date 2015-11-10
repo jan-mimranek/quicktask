@@ -35,14 +35,41 @@ class TaskPresenter extends BasePresenter
             $this->redirect('this');
         }
     }
+    
+    /**
+     * 
+     * @param type $state
+     * @param type $task_id
+     */
+    public function handleCheckTask($state, $task_id)
+    {
+        
+        $this->template->result = $state.'+'.$task_id;
+        
+        if ( $state == 'checked') {
+            $completed = TRUE;
+        } else {
+            $completed = FALSE;
+        }
+        
+        $task = $this->taskRepository->getById(intval($task_id));
+        $task->setCompleted($completed);
+        $this->taskRepository->updateEntity($task);
+        
+        $this->redrawControl('result');
+    }
 
     /**
      * @param number $idTaskGroup
      */
     public function renderTaskGroup($idTaskGroup)
     {
-        $this->idTaskGroup = $idTaskGroup;
-        $this->template->tasks = $this->getTasks($idTaskGroup);
+        if ($this->isAjax() === false) {
+            $this->idTaskGroup = $idTaskGroup;
+            $this->template->tasks = $this->getTasks($idTaskGroup, array('date' => 'DESC'));
+            $this->template->result = "Zatím nic";
+        }
+        
     }
 
     /**
@@ -84,10 +111,16 @@ class TaskPresenter extends BasePresenter
      * @param number $idTaskGroup
      * @return array
      */
-    protected function getTasks($idTaskGroup)
+    protected function getTasks($idTaskGroup, $orderBy = NULL)
     {
         $result = array();
-        $tasks = $this->taskRepository->getByTaskGroup($idTaskGroup);
+        
+        if ($orderBy == NULL) {
+            $tasks = $this->taskRepository->getByTaskGroup($idTaskGroup);
+        } else {
+            $tasks = $this->taskRepository->getByTaskGroupOrderByDateDESC($idTaskGroup, $orderBy);
+        }
+        
         foreach ($tasks as $task) {
             $item = array();
             $item['id'] = $task->getId();

@@ -41,4 +41,13 @@ class TaskRepository extends AbstractRepository
         $this->entityManager->persist($task);
         $this->entityManager->flush();
     }
+    
+    /**
+     * @param number $idTaskGroup
+     * @return Entity\Task[]
+     */
+    public function getByTaskGroupOrderByDateDESC($idTaskGroup, $oderBy)
+    {
+        return $this->task->findBy(array('taskGroup' => $idTaskGroup), $oderBy);
+    }
 }
