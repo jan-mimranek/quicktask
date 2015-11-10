@@ -23,6 +23,12 @@ $(document).ready(function(){
         sendCheckedTask('unchecked', task_id);
     });
     
+    $('frm-insertTaskForm-insertTaskForm').live('submit', function () {
+        
+        alert("A");
+        
+        return false;
+    });
     
 });
 
