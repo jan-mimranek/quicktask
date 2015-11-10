@@ -1,0 +1,9 @@
+.idea/*
+temp/*
+composer.lock
+log/*
+vendor/*
+www/bower-plugins/*
+nbproject
+nbproject/
+nbproject/*

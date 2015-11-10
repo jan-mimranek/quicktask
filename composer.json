@@ -1,0 +1,14 @@
+{
+    "repositories": [],
+    "require": {
+        "php": ">= 5.4.0",
+        "nette/nette": ">= 2.3.0",
+        "kdyby/doctrine": "2.3.0",
+        "symfony/yaml": "2.6.5",
+        "symfony/validator": "2.6.5"
+    },
+    "require-dev": {
+        "nette/tester": "~1.4.0"
+    },
+    "minimum-stability": "stable"
+}
