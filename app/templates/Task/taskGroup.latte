@@ -6,9 +6,8 @@
                 <ul class="list-group">
                     {foreach $tasks as $task}
                         <li class="list-group-item">
-                            <input type="checkbox" class="task-checkbox"/>
-                            <span>{$task['name']}</span>
-                            <span class="label label-info">{$task['date']|date:'d.m.Y'}</span>
+                            <input id="{$task['id']}" type="checkbox" class="task-checkbox" {if $task['completed'] === true}checked="checked"{/if} />
+                            <span>{$task['name']}<span class="label label-info">{$task['date']|date:'d.m.Y'}</span></span>
                         </li>
                     {/foreach}
                 </ul>
@@ -17,6 +16,10 @@
                 <div>Vysledek:</div>
                 <div>{$result}</div>
             {/snippet}
+            
+            
+            <input id="1" type="checkbox" class="test-checkbox" /> 
+            
         </div>
     </div>
 {/block}

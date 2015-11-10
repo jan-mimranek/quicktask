@@ -1,17 +1,27 @@
 $(document).ready(function(){
     $.nette.init();
-
+    
     $('.datepicker').datepicker({
         orientation: 'left top'
     });
     
     /** Check task */
+    
+    $('input.task-checkbox').iCheck({
+        handle:'checkbox',
+        checkboxClass: 'icheckbox_minimal-blue',
+    });
+    
     $('input.task-checkbox').change(function ( event ) {
         
+        var task_id = $(this).attr("id");
+        
+        console.log(task_id);
+        
         if( $(this).is(':checked') ) {
-            sendCheckedTask('checked');
+            sendCheckedTask('checked', task_id);
         } else {
-            sendCheckedTask('unchecked');
+            sendCheckedTask('unchecked', task_id);
         }
 
     });
@@ -23,9 +33,9 @@ $(document).ready(function(){
  * 
  * @param string checked/unchecked
  */
-function sendCheckedTask( param ) {
+function sendCheckedTask( param, task_id ) {
     $.nette.ajax({
         type: 'POST',
-        url: '?do=checkTask&state='+param
+        url: '?do=checkTask&state='+param+'&task_id='+task_id
     });
 };

@@ -38,18 +38,23 @@ class TaskPresenter extends BasePresenter
     
     /**
      * 
+     * @param type $state
+     * @param type $task_id
      */
-    public function handleCheckTask($state)
+    public function handleCheckTask($state, $task_id)
     {
         
+        $this->template->result = $state.'+'.$task_id;
+        
         if ( $state == 'checked') {
-            
+            $completed = TRUE;
         } else {
-            
+            $completed = FALSE;
         }
         
-        
-        $this->template->result = $state;
+        $task = $this->taskRepository->getById(intval($task_id));
+        $task->setCompleted($completed);
+        $this->taskRepository->updateEntity($task);
         
         $this->redrawControl('result');
     }

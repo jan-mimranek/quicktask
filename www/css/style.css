@@ -2,3 +2,12 @@ span.error-message {
     color: #a94442;
     font-weight: bold;
 }
+
+.task-checkbox__table {
+    display: table;
+    table-layout: fixed;
+}
+
+.task-checkbox__table-cell {
+    display: table-cell;
+}
