@@ -5,26 +5,24 @@ $(document).ready(function(){
         orientation: 'left top'
     });
     
-    /** Check task */
-    
+    /*
+     * Checkbox
+     */
     $('input.task-checkbox').iCheck({
         handle:'checkbox',
         checkboxClass: 'icheckbox_minimal-blue',
     });
     
-    $('input.task-checkbox').change(function ( event ) {
-        
+    $('input.task-checkbox').on('ifChecked', function (event) {
         var task_id = $(this).attr("id");
-        
-        console.log(task_id);
-        
-        if( $(this).is(':checked') ) {
-            sendCheckedTask('checked', task_id);
-        } else {
-            sendCheckedTask('unchecked', task_id);
-        }
-
+        sendCheckedTask('checked', task_id);
     });
+    
+    $('input.task-checkbox').on('ifUnchecked', function () {
+        var task_id = $(this).attr("id");
+        sendCheckedTask('unchecked', task_id);
+    });
+    
     
 });
 

@@ -66,7 +66,7 @@ class TaskPresenter extends BasePresenter
     {
         if ($this->isAjax() === false) {
             $this->idTaskGroup = $idTaskGroup;
-            $this->template->tasks = $this->getTasks($idTaskGroup);
+            $this->template->tasks = $this->getTasks($idTaskGroup, array('date' => 'DESC'));
             $this->template->result = "Zatím nic";
         }
         
@@ -111,10 +111,16 @@ class TaskPresenter extends BasePresenter
      * @param number $idTaskGroup
      * @return array
      */
-    protected function getTasks($idTaskGroup)
+    protected function getTasks($idTaskGroup, $orderBy = NULL)
     {
         $result = array();
-        $tasks = $this->taskRepository->getByTaskGroup($idTaskGroup);
+        
+        if ($orderBy == NULL) {
+            $tasks = $this->taskRepository->getByTaskGroup($idTaskGroup);
+        } else {
+            $tasks = $this->taskRepository->getByTaskGroupOrderByDateDESC($idTaskGroup, $orderBy);
+        }
+        
         foreach ($tasks as $task) {
             $item = array();
             $item['id'] = $task->getId();
