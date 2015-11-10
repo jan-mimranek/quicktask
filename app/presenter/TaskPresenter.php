@@ -35,14 +35,36 @@ class TaskPresenter extends BasePresenter
             $this->redirect('this');
         }
     }
+    
+    /**
+     * 
+     */
+    public function handleCheckTask($state)
+    {
+        
+        if ( $state == 'checked') {
+            
+        } else {
+            
+        }
+        
+        
+        $this->template->result = $state;
+        
+        $this->redrawControl('result');
+    }
 
     /**
      * @param number $idTaskGroup
      */
     public function renderTaskGroup($idTaskGroup)
     {
-        $this->idTaskGroup = $idTaskGroup;
-        $this->template->tasks = $this->getTasks($idTaskGroup);
+        if ($this->isAjax() === false) {
+            $this->idTaskGroup = $idTaskGroup;
+            $this->template->tasks = $this->getTasks($idTaskGroup);
+            $this->template->result = "Zatím nic";
+        }
+        
     }
 
     /**
