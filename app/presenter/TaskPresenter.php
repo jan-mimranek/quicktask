@@ -17,6 +17,8 @@ class TaskPresenter extends BasePresenter
     public $insertTaskFactory;
     /** @var number */
     protected $idTaskGroup;
+    /** @var \App\Factories\Form\ITaskFilterFactory @inject */
+    public $taskFilterFactory;
 
     public function renderDefault()
     {
@@ -35,14 +37,92 @@ class TaskPresenter extends BasePresenter
             $this->redirect('this');
         }
     }
+    
+    /**
+     * 
+     * @param string $filter_task_text
+     * @param string $filter_task_group_id
+     */
+    public function handleTaskFilter($filter_task_text, $filter_task_group_id) 
+    {
+        $tasks = $this->taskRepository->getTasksFilteredByName($filter_task_text, intval($filter_task_group_id));
+        $this->template->tasks = $tasks;
+        $this->template->taskGroups = $this->getTaskGroups();
+        
+        $this->redrawControl('tasks');
+    }
+    
+    /**
+     * 
+     * @param string $name
+     * @param string $date
+     */
+    public function handleInsertTask($name, $date, $idTaskGroup, $filter_task_text, $filter_task_group_id) {
+        
+        $taskGroup = $this->taskGroupRepository->getById($idTaskGroup);
+
+        $taskEntity = new \App\Model\Entity\Task();
+        $taskEntity->setName($name);
+        $taskEntity->setDate($date);
+        $taskEntity->setTaskGroup($taskGroup);
+        $this->taskRepository->insert($taskEntity);
+        $this->presenter->flashMessage('Task was created', 'success');
+        
+        $tasks = $this->taskRepository->getTasksFilteredByName($filter_task_text, intval($filter_task_group_id));
+        $this->template->tasks = $tasks;
+        $this->template->taskGroups = $this->getTaskGroups();
+        
+        $this->redrawControl('tasks');
+        
+    }
+    
+    function handleTaskGroupChange($filter_task_text, $filter_task_group_id, $taskGroupId, $taskId) 
+    {
+        
+        $taskGroup = $this->taskGroupRepository->getById($taskGroupId);
+        
+        $task = $this->taskRepository->getById(intval($taskId));
+        $task->setTaskGroup($taskGroup);
+        
+        $this->taskRepository->updateEntity($task);
+        
+        $this->template->tasks = $this->taskRepository->getTasksFilteredByName($filter_task_text, intval($filter_task_group_id));
+        $this->template->taskGroups = $this->getTaskGroups();
+        
+        $this->redrawControl('tasks');
+    }
+    
+    /**
+     * 
+     * @param type $state
+     * @param type $task_id
+     */
+    public function handleCheckTask($state, $task_id)
+    {
+        if ( $state == 'checked') {
+            $completed = TRUE;
+        } else {
+            $completed = FALSE;
+        }
+        
+        $task = $this->taskRepository->getById(intval($task_id));
+        $task->setCompleted($completed);
+        $this->taskRepository->updateEntity($task);
+        
+    }
 
     /**
      * @param number $idTaskGroup
      */
     public function renderTaskGroup($idTaskGroup)
     {
-        $this->idTaskGroup = $idTaskGroup;
-        $this->template->tasks = $this->getTasks($idTaskGroup);
+        
+        if ($this->isAjax() === false) {
+            $this->idTaskGroup = $idTaskGroup;
+            $this->template->tasks = $this->getTasks($idTaskGroup, array('date' => 'DESC'));
+            
+            $this->template->taskGroups = $this->getTaskGroups();
+        }
     }
 
     /**
@@ -64,6 +144,11 @@ class TaskPresenter extends BasePresenter
         return $control;
     }
 
+    protected function createComponentTaskFilterForm() {
+        $form = $this->taskFilterFactory->create($this->idTaskGroup, $this->taskRepository);
+        return $form;
+    }
+    
     /**
      * @return array
      */
@@ -84,18 +169,45 @@ class TaskPresenter extends BasePresenter
      * @param number $idTaskGroup
      * @return array
      */
-    protected function getTasks($idTaskGroup)
+    protected function getTasks($idTaskGroup, $orderBy = NULL)
     {
-        $result = array();
-        $tasks = $this->taskRepository->getByTaskGroup($idTaskGroup);
-        foreach ($tasks as $task) {
-            $item = array();
-            $item['id'] = $task->getId();
-            $item['date'] = $task->getDate();
-            $item['name'] = $task->getName();
-            $item['completed'] = $task->getCompleted();
-            $result[] = $item;
+        
+        
+        if ($orderBy == NULL) {
+            $tasks = $this->taskRepository->getByTaskGroup($idTaskGroup);
+        } else {
+            $tasks = $this->taskRepository->getByTaskGroupOrderByDateDESC($idTaskGroup, $orderBy);
         }
+        
+        return $this->tasksToArray($tasks);
+    }
+    
+    /**
+     * 
+     * @param array $tasks array of Task entities
+     * @return arrray
+     */
+    public function tasksToArray($tasks) {
+        
+        $result = array();
+        
+        if (count($tasks) > 0) 
+        {
+            foreach ($tasks as $task) {
+                
+                /* @var $task \App\Model\Entity\Task */
+                $item = array();
+                $item['id'] = $task->getId();
+                $item['date'] = $task->getDate();
+                $item['name'] = $task->getName();
+                $item['completed'] = $task->getCompleted();
+                $item['taskGroup'] = $task->getTaskGroup()->getId();
+                $result[] = $item;
+            }
+        }
+        
         return $result;
     }
+
+
 }

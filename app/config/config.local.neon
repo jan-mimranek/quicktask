@@ -1,6 +1,6 @@
 doctrine:
-    user: root
-    password: test
+    user: quick
+    password: task
     dbname: quicktask
 
     console:
