@@ -50,4 +50,32 @@ class TaskRepository extends AbstractRepository
     {
         return $this->task->findBy(array('taskGroup' => $idTaskGroup), $oderBy);
     }
+    
+    
+    /**
+     * 
+     * @param type $name
+     * @param type $id
+     * @return array
+     */
+    public function getTasksFilteredByName($name, $id) {
+        
+        $repository = $this->entityManager->getRepository('\App\Model\Entity\Task');
+        $builder    = $repository->createQueryBuilder('t');
+        
+        $tasks   = $builder
+                ->select('t.id', 'IDENTITY(t.taskGroup) as taskGroup', 't.name', 't.date', 't.completed')
+                ->where('t.taskGroup = :taskid')
+                ->andWhere('t.name LIKE :taskname')
+                ->orderBy('t.date', 'DESC')
+                ->setParameter('taskid', $id)
+                ->setParameter('taskname', '%'.$name.'%')
+                ->getQuery()
+                ->getResult();
+        
+        return $tasks;
+        
+    }
+    
+    
 }

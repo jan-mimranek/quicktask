@@ -1,5 +1,7 @@
 {block content}
     {control insertTaskForm}
+    
+    {control taskFilterForm}
     <div class="row">
         <div class="col-md-12">
             {snippet tasks}
@@ -7,18 +9,20 @@
                     {foreach $tasks as $task}
                         <li class="list-group-item">
                             <input id="{$task['id']}" type="checkbox" class="task-checkbox" {if $task['completed'] === true}checked="checked"{/if} />
-                            <span>{$task['name']}<span class="label label-info">{$task['date']|date:'d.m.Y'}</span></span>
+                            <span>{$task['name']}
+                                <span class="label label-info">{$task['date']|date:'d.m.Y'}</span>
+                                <label style="control-label">
+                                    <select  id="{$task['id']}" class="form-control task-group-seletbox">
+                                        {foreach $taskGroups as $taskGroup}
+                                            <option value="{$taskGroup['id']}" {if $task['taskGroup'] == $taskGroup['id']}selected{/if}>{$taskGroup['name']}</option>
+                                        {/foreach}
+                                    </select>
+                                </label>
+                            </span>
                         </li>
                     {/foreach}
                 </ul>
             {/snippet}
-            {snippet result}
-                <div>Vysledek:</div>
-                <div>{$result}</div>
-            {/snippet}
-            
-            
-            <input id="1" type="checkbox" class="test-checkbox" /> 
             
         </div>
     </div>
