@@ -48,6 +48,7 @@ class TaskPresenter extends BasePresenter
         $tasks = $this->taskRepository->getTasksFilteredByName($filter_task_text, intval($filter_task_group_id));
         $this->template->tasks = $tasks;
         $this->template->taskGroups = $this->getTaskGroups();
+        
         $this->redrawControl('tasks');
     }
     

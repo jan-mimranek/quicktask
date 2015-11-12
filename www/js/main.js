@@ -11,14 +11,14 @@ $(document).ready(function(){
     /*
      * Mark Task as Checked
      */
-    $('input.task-checkbox').on('ifChecked', function (event) {
+    $(document).on('ifChecked', 'input.task-checkbox', function (event) {
         var task_id = $(this).attr("id");
         sendCheckedTask('checked', task_id);
     });
     /*
      * Mark Task as UnChecked
      */
-    $('input.task-checkbox').on('ifUnchecked', function () {
+    $(document).on('ifUnchecked', 'input.task-checkbox', function () {
         var task_id = $(this).attr("id");
         sendCheckedTask('unchecked', task_id);
     });
@@ -36,18 +36,18 @@ $(document).ready(function(){
     /*
      * Add New Task
      */
-    $("form.ajax.insert-task").on("submit", function (event) {
+    $(document).on("submit", "form.ajax.insert-task", function (event) {
         sendInsertTaskForm( this );
         return false;
     });
-    $("form.ajax.insert-task :submit").on("click", function (event) {
+    $(document).on("click", "form.ajax.insert-task :submit", function (event) {
         sendInsertTaskForm( this );
         return false;
     });
     /*
      * Task Group Selectbox change
      */
-    $('select.task-group-seletbox').change(function(){
+    $(document).on('change', 'select.task-group-seletbox', function(){
         sendTaskGroupChange( this );
     });
 
